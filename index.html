@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WBS - Pacerón</title>
+<title>WBS - Paceron</title>
 <script src="https://d3js.org/d3.v7.min.js">
 </script>
 <style>
@@ -51,7 +51,7 @@
 
 <div class="header">
   <div>
-    <h1>WBS — Pacerón</h1>
+    <h1>WBS — Paceron</h1>
     <div class="sub">Work Breakdown Structure · Proyecto Final 5K3-G11</div>
   </div>
   <div class="badge">v1.0</div>
@@ -389,7 +389,7 @@ function buildHierarchy(csv) {
     }
   }
 
-  return { name: 'Pacerón', children: deliverables };
+  return { name: 'Paceron', children: deliverables };
 }
 
 // ─── Global state ────────────────────────────────────────────────
@@ -466,7 +466,7 @@ function render() {
   const links = [];
 
   // Root
-  all.push({ id:'root', name:'Pacerón', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0 });
+  all.push({ id:'root', name:'Paceron', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0 });
 
   const GAP = { rootDel:50, delWp:24, wpWp:16, wpTask:16, taskTask:10, delDel:28 };
   const PAD = { top:36, bottom:40 };
@@ -616,7 +616,7 @@ function render() {
       const tt = d3.select('#tooltip');
       let title, items = [];
       if (dep === 0) {
-        title = 'Pacerón — Proyecto raíz';
+        title = 'Paceron — Proyecto raíz';
       } else if (dep === 1) {
         title = 'Entregable: ' + d.name;
       } else if (dep === 2) {
