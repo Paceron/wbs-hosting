@@ -63,7 +63,7 @@
   <button onclick="resetZoom()">⟲ Reset</button>
   <button onclick="centerTree()">⊞ Centrar</button>
   <span class="stats" id="stats"></span>
-  <span style="font-size:11px;color:#888">🖱️ Pasá el mouse sobre paquetes con <span style="background:#e94560;color:#fff;border-radius:50%;padding:0 5px;font-size:9px;display:inline-block;line-height:15px;min-width:15px;text-align:center">N</span> para ver tareas</span>
+  <span style="font-size:11px;color:#888">🖱️ Pasá el mouse sobre cualquier nodo para ver información</span>
   <div class="legend" id="legend"></div>
 </div>
 
@@ -420,11 +420,11 @@ function wrapLines(text, maxW, size, weight) {
 
 // ─── Node style per depth ───────────────────────────────────────
 const STYLE = [
-  { w:130, minH:38, fs:'16px', fw:'700', fg:'#fff', lh:22, maxW:110 },
-  { w:175, minH:30, fs:'13px', fw:'600', fg:'#fff', lh:18, maxW:155 },
-  { w:170, minH:22, fs:'10px', fw:'500', fg:'#1a2a3a', lh:14, maxW:148 },
-  { w:170, minH:26, fs:'10px', fw:'500', fg:'#1a2a3a', lh:14, maxW:148 }, // WP+tasks
-  { w:155, minH:17, fs:'9px', fw:'400', fg:'#5a6a7a', lh:13, maxW:135 }
+  { w:150, minH:40, fs:'17px', fw:'700', fg:'#fff', lh:24, maxW:130 },
+  { w:210, minH:34, fs:'14px', fw:'600', fg:'#fff', lh:20, maxW:185 },
+  { w:200, minH:26, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:178 },
+  { w:200, minH:30, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:178 }, // WP+tasks
+  { w:190, minH:20, fs:'10px', fw:'400', fg:'#5a6a7a', lh:14, maxW:168 }
 ];
 
 function nodeH(name, dep, hasTasks) {
@@ -468,7 +468,7 @@ function render() {
   // Root
   all.push({ id:'root', name:'Pacerón', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0 });
 
-  const GAP = { rootDel:40, delWp:14, wpWp:5, wpTask:8, taskTask:3, delDel:18 };
+  const GAP = { rootDel:50, delWp:24, wpWp:16, wpTask:16, taskTask:10, delDel:28 };
   const PAD = { top:36, bottom:40 };
   const nDel = data.children.length;
   const totalW = nDel * STYLE[1].w + (nDel - 1) * GAP.delDel;
@@ -610,24 +610,33 @@ function render() {
       });
     }
 
-    // ─── Task tooltip on WP (named events to not conflict) ──
-    if (hasTasks) {
-      el.on('mouseenter.tip', function(event) {
-        if (event.buttons) return;
-        const tt = d3.select('#tooltip');
-        tt.select('#tt-title').text(d.name + ' (' + nTasks + ' tareas)');
-        tt.select('#tt-list').html('');
-        d.tasks.forEach(t => tt.select('#tt-list').append('div').attr('class','tt-item').text(t));
-        const [mx, my] = d3.pointer(event, container);
-        tt.style('left',(mx+20)+'px').style('top',(my-10)+'px').classed('visible',true);
-      })
-      .on('mousemove.tip', function(event) {
-        if (event.buttons) return;
-        const [mx, my] = d3.pointer(event, container);
-        d3.select('#tooltip').style('left',(mx+20)+'px').style('top',(my-10)+'px');
-      })
-      .on('mouseleave.tip', () => d3.select('#tooltip').classed('visible',false));
-    }
+    // ─── Tooltip on every node (named events to not conflict) ──
+    el.on('mouseenter.tip', function(event) {
+      if (event.buttons) return;
+      const tt = d3.select('#tooltip');
+      let title, items = [];
+      if (dep === 0) {
+        title = 'Pacerón — Proyecto raíz';
+      } else if (dep === 1) {
+        title = 'Entregable: ' + d.name;
+      } else if (dep === 2) {
+        title = d.name + (hasTasks ? ' (' + nTasks + ' tareas)' : '');
+        if (hasTasks) items = d.tasks;
+      } else {
+        title = 'Tarea: ' + d.name;
+      }
+      tt.select('#tt-title').text(title);
+      const list = tt.select('#tt-list').html('');
+      items.forEach(t => list.append('div').attr('class','tt-item').text(t));
+      const [mx, my] = d3.pointer(event, container);
+      tt.style('left',(mx+20)+'px').style('top',(my-10)+'px').classed('visible',true);
+    })
+    .on('mousemove.tip', function(event) {
+      if (event.buttons) return;
+      const [mx, my] = d3.pointer(event, container);
+      d3.select('#tooltip').style('left',(mx+20)+'px').style('top',(my-10)+'px');
+    })
+    .on('mouseleave.tip', () => d3.select('#tooltip').classed('visible',false));
 
     // ─── Hover highlight (named events) ─────────────────────
     el.on('mouseenter.hover', function() {
