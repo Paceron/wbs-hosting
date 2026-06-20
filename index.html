@@ -62,6 +62,9 @@
   <button onclick="zoomOut()">🔍 −</button>
   <button onclick="resetZoom()">⟲ Reset</button>
   <button onclick="centerTree()">⊞ Centrar</button>
+  <span class="sep" style="width:1px;height:22px;background:#dce3ec;display:inline-block"></span>
+  <button onclick="expandAll()">⊞ Expandir todo</button>
+  <button onclick="collapseAll()">⊟ Colapsar todo</button>
   <span class="stats" id="stats"></span>
   <span style="font-size:11px;color:#888">🖱️ Pasá el mouse sobre cualquier nodo para ver información</span>
   <div class="legend" id="legend"></div>
@@ -420,11 +423,11 @@ function wrapLines(text, maxW, size, weight) {
 
 // ─── Node style per depth ───────────────────────────────────────
 const STYLE = [
-  { w:150, minH:40, fs:'17px', fw:'700', fg:'#fff', lh:24, maxW:130 },
-  { w:210, minH:34, fs:'14px', fw:'600', fg:'#fff', lh:20, maxW:185 },
-  { w:200, minH:26, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:178 },
-  { w:200, minH:30, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:178 }, // WP+tasks
-  { w:190, minH:20, fs:'10px', fw:'400', fg:'#5a6a7a', lh:14, maxW:168 }
+  { w:200, minH:40, fs:'17px', fw:'700', fg:'#fff', lh:24, maxW:180 },
+  { w:280, minH:34, fs:'14px', fw:'600', fg:'#fff', lh:20, maxW:255 },
+  { w:270, minH:26, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:248 },
+  { w:270, minH:30, fs:'11px', fw:'500', fg:'#1a2a3a', lh:16, maxW:248 }, // WP+tasks
+  { w:250, minH:20, fs:'10px', fw:'400', fg:'#5a6a7a', lh:14, maxW:228 }
 ];
 
 function nodeH(name, dep, hasTasks) {
@@ -700,6 +703,25 @@ function centerTree() {
     zoom.transform,
     d3.zoomIdentity.translate(tx, ty).scale(scale)
   );
+}
+
+function expandAll() {
+  collapsedWPs.clear();
+  render();
+  centerTree();
+}
+
+function collapseAll() {
+  const data = buildHierarchy(CSV);
+  data.children.forEach((del, di) => {
+    del.children.forEach((wp, wi) => {
+      if (wp.tasks && wp.tasks.length > 0) {
+        collapsedWPs.add(`d${di}w${wi}`);
+      }
+    });
+  });
+  render();
+  centerTree();
 }
 
 // Initialize
