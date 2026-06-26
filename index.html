@@ -38,11 +38,14 @@
   .task-tooltip .tt-item:last-child{border:none}
   #tooltip{margin:0}
   @media print{
-    body{background:#fff;overflow:visible}
-    .header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .toolbar{display:none}
-    #vis-container{overflow:visible!important;height:auto!important}
-    svg{height:auto!important}
+    @page{size:landscape;margin:.3cm}
+    body{background:#fff;overflow:visible;margin:0;padding:0}
+    .header{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:4px 10px}
+    .header h1{font-size:14px}
+    .header .badge{font-size:9px;padding:2px 8px}
+    .toolbar{display:none!important}
+    #vis-container{overflow:visible!important;height:auto!important;min-height:90vh;background:#fff!important;background-image:none!important}
+    svg{height:90vh!important;width:100%!important;display:block}
   }
 </style>
 </head>
@@ -61,8 +64,10 @@
   <span class="sep" style="width:1px;height:18px;background:#dce3ec;display:inline-block"></span>
   <button onclick="expandAll()">⊞ Expandir todo</button>
   <button onclick="collapseAll()">⊟ Colapsar todo</button>
+  <span class="sep" style="width:1px;height:18px;background:#dce3ec;display:inline-block;margin-left:2px"></span>
+  <button onclick="exportSVG()">📷 SVG</button>
+  <button onclick="exportPNG()">🖼️ PNG</button>
   <span class="stats" id="stats"></span>
-  <span style="font-size:10px;color:#888">🖱️ Pasá el mouse sobre los nodos</span>
 </div>
 
 <div id="vis-container">
@@ -817,6 +822,92 @@ function collapseAll() {
   });
   render();
   centerTree();
+}
+
+// ─── Export functions ───────────────────────────────────────────
+function buildExportSVG() {
+  const treeEl = document.getElementById('tree-group');
+  if (!treeEl) return null;
+  const ot = treeEl.getAttribute('transform');
+  treeEl.setAttribute('transform', 'translate(0,0)');
+  const bbox = treeEl.getBBox();
+  treeEl.setAttribute('transform', ot);
+  const pad = 8;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('xmlns', ns);
+  svg.setAttribute('viewBox', `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
+  svg.setAttribute('width', bbox.width + pad * 2);
+  svg.setAttribute('height', bbox.height + pad * 2);
+  const origDefs = document.querySelector('#tree-svg defs');
+  if (origDefs) svg.appendChild(origDefs.cloneNode(true));
+  const st = document.createElementNS(ns, 'style');
+  st.textContent = '.link{fill:none;stroke:#a0b0c4;stroke-width:1.8;stroke-opacity:.7}text{font-family:\'Segoe UI\',Arial,sans-serif}';
+  svg.appendChild(st);
+  const bg = document.createElementNS(ns, 'rect');
+  bg.setAttribute('x', bbox.x - pad);
+  bg.setAttribute('y', bbox.y - pad);
+  bg.setAttribute('width', bbox.width + pad * 2);
+  bg.setAttribute('height', bbox.height + pad * 2);
+  bg.setAttribute('fill', '#ffffff');
+  svg.appendChild(bg);
+  const clone = treeEl.cloneNode(true);
+  clone.removeAttribute('transform');
+  svg.appendChild(clone);
+  return { svg, w: bbox.width + pad * 2, h: bbox.height + pad * 2 };
+}
+function downloadBlob(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 5e3);
+}
+function exportSVG() {
+  const r = buildExportSVG();
+  if (!r) return;
+  const str = new XMLSerializer().serializeToString(r.svg);
+  downloadBlob(new Blob([str], { type: 'image/svg+xml' }), 'WBS-Paceron.svg');
+}
+function exportPNG() {
+  const r = buildExportSVG();
+  if (!r) return;
+  const str = new XMLSerializer().serializeToString(r.svg);
+  const url = URL.createObjectURL(new Blob([str], { type: 'image/svg+xml;charset=utf-8' }));
+  const canvas = document.createElement('canvas');
+  const scale = 2;
+  canvas.width = r.w * scale;
+  canvas.height = r.h * scale;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(scale, scale);
+  const img = new Image();
+  img.onload = () => {
+    ctx.drawImage(img, 0, 0);
+    canvas.toBlob(blob => downloadBlob(blob, 'WBS-Paceron.png'));
+    URL.revokeObjectURL(url);
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); };
+  img.src = url;
+}
+function exportPDF() {
+  const svgEl = document.getElementById('tree-svg');
+  const treeEl = document.getElementById('tree-group');
+  const origViewBox = svgEl.getAttribute('viewBox');
+  const ot = treeEl.getAttribute('transform');
+  treeEl.setAttribute('transform', 'translate(0,0)');
+  const bbox = treeEl.getBBox();
+  treeEl.setAttribute('transform', ot);
+  const pad = 10;
+  svgEl.setAttribute('viewBox', `${bbox.x - pad} ${bbox.y - pad} ${bbox.width + pad * 2} ${bbox.height + pad * 2}`);
+  function restore() {
+    svgEl.setAttribute('viewBox', origViewBox);
+    centerTree();
+    window.removeEventListener('afterprint', restore);
+  }
+  window.addEventListener('afterprint', restore);
+  setTimeout(() => { if (svgEl.getAttribute('viewBox') !== origViewBox) restore(); }, 5000);
+  window.print();
 }
 
 // Initialize
