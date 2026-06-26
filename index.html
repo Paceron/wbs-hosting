@@ -54,7 +54,7 @@
     <h1>WBS — Paceron</h1>
     <div class="sub">Work Breakdown Structure · Proyecto Final 5K3-G11</div>
   </div>
-  <div class="badge">v1.0</div>
+  <div class="badge">v2.0</div>
 </div>
 
 <div class="toolbar">
@@ -97,16 +97,33 @@
 const COLORS = [
   '#0f3460','#c0392b','#0a8754','#b85e2e','#5b4a9e',
   '#1a8a9a','#c44569','#2d6a4f','#a85d3a','#4a6fa5',
-  '#d4833a','#5a6a8a'
+  '#d4833a','#5a6a8a','#7b3f6e','#3f6e7b','#6e7b3f'
 ];
 
 const COLOR_LIGHT = [
   '#d6e4f0','#f5d6d4','#d0edd9','#f5ddc9','#e0d8f0',
   '#d0ecee','#f5d6e0','#c8e6d8','#f0dac8','#d8e2f0',
-  '#f5e8c8','#d8dce6'
+  '#f5e8c8','#d8dce6','#eedbe8','#dbe8ee','#e8eedb'
 ];
 
 const CSV = [
+  ["Exposición en Jornada de Proyectos Finales","Paper científico",""],
+  ["","Poster",""],
+  ["","Video",""],
+  ["","Demo del producto",""],
+  ["Exploración Técnica","Pruebas de concepto de backend",""],
+  ["","Pruebas de concepto de frontend web",""],
+  ["","Pruebas de concepto de frontend mobile",""],
+  ["","Pruebas de concepto de frontend multiplataforma",""],
+  ["","Pruebas de sistemas de despliegue",""],
+  ["","Bosquejos de diseño de interfaces",""],
+  ["","Pruebas de uso de LLMs",""],
+  ["","Pruebas de pipelines de entrenamiento de LLMs",""],
+  ["","Templates tentativos de repositorios de código",""],
+  ["Definición Documental del Proyecto","Definición de propuesta de proyecto",""],
+  ["","Estudio inicial de propuesta y valor",""],
+  ["","Plan de proyecto",""],
+  ["","Sprint 0 y lineamientos generales",""],
   ["Configuración Técnica IA","Calidad y Guardrails de IA",""],
   ["","Evaluación de Proveedores de IA",""],
   ["","Gobernanza de Agentes de IA",""],
@@ -136,17 +153,27 @@ const CSV = [
   ["","Escaneo de Código QR",""],
   ["","Generación de Código QR",""],
   ["","Geolocalización del Grupo",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Control Manual de Asistencia"],
   ["","","Pruebas de Escaneo de Código QR"],
   ["","","Pruebas de Generación de Código QR"],
   ["","","Pruebas de Geolocalización del Grupo"],
   ["","Despliegues de Funcionalidades","Despliegue de control manual de asistencias"],
   ["","","Despliegue de Geolocalización"],
-  ["","","Despliegue de funcionalidades de Qr"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de control de asistencia con QR"],
+  ["","","Despliegue de de funcionalidades de Qr"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de control de asistencia con QR"],
   ["Gestión Administrativa del Sistema","Control de Acceso por Rol y Plan",""],
   ["","Gestión Global de Usuarios y Equipos",""],
   ["","Supervisión y Control Operativo",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Control de Acceso por Rol y Plan"],
   ["","","Pruebas de Gestión Global de Usuarios y Equipos"],
   ["","","Pruebas de Supervisión y Control Operativo"],
@@ -167,6 +194,11 @@ const CSV = [
   ["","Salida de Equipos",""],
   ["","Solicitudes a Equipos Públicos",""],
   ["","Visualización de Información del Equipo",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Asignación de Corredores a Grupos"],
   ["","","Pruebas de Creación de Equipos"],
   ["","","Pruebas de Creación de Grupos en Equipos"],
@@ -186,7 +218,7 @@ const CSV = [
   ["","","Despliegue Crud de Grupos"],
   ["","","Despliegue de listados y filtros de equipo"],
   ["","","Despliegue de listados y filtros de grupo"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de invitación y incorporación a equipo"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de invitación y incorporación a equipo"],
   ["Gestión de Usuarios y Roles","Activación de Perfil de Entrenador",""],
   ["","Baja de la Plataforma",""],
   ["","Carga de Documentación",""],
@@ -195,6 +227,11 @@ const CSV = [
   ["","Registro de Usuarios",""],
   ["","Términos y Condiciones",""],
   ["","Visualización de Perfil",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Activación de Perfil de Entrenador"],
   ["","","Pruebas de Baja de la Plataforma"],
   ["","","Pruebas de Carga de Documentación"],
@@ -207,11 +244,16 @@ const CSV = [
   ["","","Despliegue de CRUD de Usuarios a la plataforma"],
   ["","","Despliegue de CRUD de TyC"],
   ["","","Despliegue de Vistas iniciales de Visualizacion"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de registro y autenticación de usuario"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de registro y autenticación de usuario"],
   ["Monitoreo de Actividades","Evaluación de Objetivos",""],
   ["","Evolución Personal",""],
   ["","Métricas de Progreso",""],
   ["","Tendencias de Rendimiento",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Evaluación de Objetivos"],
   ["","","Pruebas de Evolución Personal"],
   ["","","Pruebas de Métricas de Progreso"],
@@ -247,6 +289,11 @@ const CSV = [
   ["","Revocación de Planes de Entrenamiento",""],
   ["","Solicitudes de Cambio de Plan",""],
   ["","Sugerencias al Plan de Entrenamiento",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Asignación de Ejercicios a Sesiones"],
   ["","","Pruebas de Asignación de Planes de Entrenamiento"],
   ["","","Pruebas de Asignación de Sesiones a Encuentros"],
@@ -278,7 +325,7 @@ const CSV = [
   ["","","Despliegue de CRUD de Sesiones, Composición y Control de Asistencia"],
   ["","","Despliegue de CRUD Gestión de Encuentros y Entrenamientos Grupales"],
   ["","","Despliegue de Vista Transversal (Calendario)"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de creación y asignación de plan de entrenamiento"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de creación y asignación de plan de entrenamiento"],
   ["Registro y Seguimiento de Actividades","Actividades del Equipo",""],
   ["","Comparación Planificado vs Realizado",""],
   ["","Eliminación de Actividades Realizadas",""],
@@ -292,6 +339,11 @@ const CSV = [
   ["","Recorrido de Entrenamiento Realizado",""],
   ["","Registro Manual de Actividades",""],
   ["","Rendimiento del Equipo",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Actividades del Equipo"],
   ["","","Pruebas de Comparación Planificado vs Realizado"],
   ["","","Pruebas de Eliminación de Actividades Realizadas"],
@@ -304,10 +356,10 @@ const CSV = [
   ["","","Pruebas de Recorrido de Entrenamiento Realizado"],
   ["","","Pruebas de Registro Manual de Actividades"],
   ["","","Pruebas de Rendimiento del Equipo"],
-  ["","Despliegues de Funcionalidades","Despliegue en producción de nuevas funcionalidades de registro de actividades"],
+  ["","Despliegues de Funcionalidades","Despliegue en producción de nuevas funcionalidades de registro de actividades (sesiones en vivo y asincrónicas)"],
   ["","","Despliegue en producción del módulo de registro y seguimiento de actividades"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de registro de actividad deportiva con sensores"],
-  ["","","Documentación: Diagrama de secuencia del flujo de sesión de entrenamiento en vivo"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de registro de actividad deportiva con sensores"],
+  ["","","Diagrama de secuencia del flujo de sesión de entrenamiento en vivo (inicio, pausa, fin)"],
   ["Sistema de Cobro y Suscripciones","Control de Estado de Pago",""],
   ["","Definición de Planes de Suscripción",""],
   ["","Historial de Pagos y Facturación",""],
@@ -316,6 +368,11 @@ const CSV = [
   ["","Pago de Suscripciones",""],
   ["","Suscripción de Corredores",""],
   ["","Suscripción de Entrenadores",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Control de Estado de Pago"],
   ["","","Pruebas de Definición de Planes de Suscripción"],
   ["","","Pruebas de Historial de Pagos y Facturación"],
@@ -324,45 +381,55 @@ const CSV = [
   ["","","Pruebas de Pago de Suscripciones"],
   ["","","Pruebas de Suscripción de Corredores"],
   ["","","Pruebas de Suscripción de Entrenadores"],
-  ["","Despliegues de Funcionalidades","Despliegue de CRUD de suscripciones"],
+  ["","Despliegues de Funcionalidades","Despliegue de CruD de subscripciones"],
   ["","","Despliegue de acciones de pago"],
-  ["","","Despliegue de Listados y Ajustes de Vistas"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de activación de suscripción"],
-  ["","","Documentación: Diagrama de secuencia del flujo de pago con split"],
+  ["","","Despliegue  de Listados y Ajustes de Vistas"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de activación de suscripción"],
+  ["","","Diagrama de secuencia del flujo de pago con split (corredor paga a entrenador)"],
   ["Sistema de Incentivos y Gamificación","Desafíos entre Corredores",""],
   ["","Leaderboard de Rendimiento",""],
   ["","Logros y Niveles",""],
   ["","Rachas y Recordatorios",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Desafíos entre Corredores"],
   ["","","Pruebas de Leaderboard de Rendimiento"],
   ["","","Pruebas de Logros y Niveles"],
   ["","","Pruebas de Rachas y Recordatorios"],
-  ["","Despliegues de Funcionalidades","Despliegue de desafíos de corredores"],
-  ["","","Despliegue de Leaderboards de rendimientos"],
-  ["","","Despliegue de Detalle de logros y niveles"],
+  ["","Despliegues de Funcionalidades","Despliegue de desafios de corredores"],
+  ["","","Despliegue de Leadreboards de rendimientos"],
+  ["","","Despliegue de Detalle de llogros y nivels"],
   ["","","Despliegue de Rachas y recordatorios"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de desbloqueo de logros"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de desbloqueo de logros"],
   ["Funcionalidades de IA","Consultas IA sobre el Equipo",""],
   ["","Resúmenes Automáticos con IA",""],
   ["","Retroalimentación Automatizada con IA",""],
   ["","Recomendaciones IA de Planificación",""],
   ["","Recomendaciones IA de Entrenamiento",""],
   ["","Estímulos IA en Vivo",""],
+  ["","Coordinación y Gestión","Reuniones síncronas"],
+  ["","","Comunicación asincrónica constante"],
+  ["","","Revisión de cambios"],
+  ["","","Control de avances"],
+  ["","","Ajuste de propuesta funcional"],
   ["","Pruebas","Pruebas de Consultas IA sobre el Equipo"],
   ["","","Pruebas de Resúmenes Automáticos con IA"],
   ["","","Pruebas de Retroalimentación Automatizada con IA"],
   ["","","Pruebas de Recomendaciones IA de Planificación"],
   ["","","Pruebas de Recomendaciones IA de Entrenamiento"],
   ["","","Pruebas de Estímulos IA en Vivo"],
-  ["","Despliegues de Funcionalidades","Despliegue de IA en módulo de equipo"],
+  ["","Despliegues de Funcionalidades","Despliegue de IA en modulo de equipo"],
   ["","","Despliegue de Resumen de actividades por IA"],
   ["","","Despliegue de Retroalimentación Automatizada con IA"],
-  ["","","Despliegue de Sugerencias vía IA para planes de entrenamiento"],
-  ["","","Despliegue de IA en entrenamiento"],
-  ["","","Despliegue de IA en módulo de gamificación"],
-  ["","Documentación del Módulo","Documentación: Diagrama de secuencia del flujo de consulta IA sobre el equipo"],
-  ["","","Documentación: Diagrama de secuencia del flujo de generación de resumen IA"],
-  ["","","Documentación: Diagrama de secuencia del flujo de estímulos IA durante entrenamiento"]
+  ["","","Despliegue de Sugerencias via AI para planes de entrenamiento"],
+  ["","","Despliegue de IA en entranamiento"],
+  ["","","Despliegue de IA en modulo de gamificatión"],
+  ["","Documentación del Módulo","Diagrama de secuencia del flujo de consulta IA sobre el equipo"],
+  ["","","Diagrama de secuencia del flujo de generación de resumen IA de métricas"],
+  ["","","Diagrama de secuencia del flujo de estímulos IA durante entrenamiento"]
 ];
 
 function buildHierarchy(csv) {
@@ -430,10 +497,18 @@ const STYLE = [
   { w:250, minH:28, fs:'13px', fw:'400', fg:'#5a6a7a', lh:18, maxW:228 }
 ];
 
-function nodeH(name, dep, hasTasks) {
+function dynGap(base, h, minH) {
+  return Math.round(base * Math.max(0.85, Math.min(h / minH, 2)));
+}
+function symGap(base, prevH, nextH, minH) {
+  return Math.round(base * Math.max(0.85, Math.min(Math.max(prevH, nextH) / minH, 2)));
+}
+
+function nodeH(name, dep, hasTasks, maxW) {
   const s = dep === 2 && hasTasks ? STYLE[3] : STYLE[dep] || STYLE[4];
-  if (txW(name, s.fs, s.fw) <= s.maxW) return s.minH;
-  const n = wrapLines(name, s.maxW, s.fs, s.fw).length;
+  const w = maxW || s.maxW;
+  if (txW(name, s.fs, s.fw) <= w) return s.minH;
+  const n = wrapLines(name, w, s.fs, s.fw).length;
   return Math.max(s.minH, Math.ceil(n * s.lh + 4));
 }
 
@@ -463,66 +538,98 @@ function render() {
     `<div class="leg-item"><span class="leg-dot" style="background:${COLORS[i]}"></span>${d.name}</div>`
   ).join('');
 
-  // ─── Pre-compute heights ─────────────────────────────────────
-  // Each node gets: id, name, dep, x, y, w, _h, ci, tasks, parent
-  const all = []; // flat array of all nodes
+  // ─── Pre-compute positions with variable widths ─────────────
+  const all = [];
   const links = [];
 
-  // Root
-  all.push({ id:'root', name:'Paceron', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0 });
+  all.push({ id:'root', name:'Paceron', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0, _maxW:STYLE[0].maxW });
 
-  const GAP = { rootDel:50, delWp:24, wpWp:16, wpTask:16, taskTask:10, delDel:28 };
+  const GAP = { rootDel:42, delWp:22, wpWp:14, wpTask:14, taskTask:10, delDel:22 };
   const PAD = { top:36, bottom:40 };
-  const nDel = data.children.length;
-  const totalW = nDel * STYLE[1].w + (nDel - 1) * GAP.delDel;
 
-  // Compute Y positions
+  const wpCounts = data.children.map(d => d.children.length);
+  const maxWp = Math.max(...wpCounts);
+  const minWp = Math.min(...wpCounts);
+  const wpRange = maxWp - minWp || 1;
+  const delWidths = data.children.map(d => {
+    const ratio = (d.children.length - minWp) / wpRange;
+    const aRatio = Math.pow(ratio, 2.2);
+    return Math.round(135 + aRatio * (430 - 135));
+  });
+
+  const nDel = data.children.length;
+  const totalW = delWidths.reduce((a, b) => a + b, 0) + (nDel - 1) * GAP.delDel;
+
   let maxY = PAD.top + STYLE[0].minH;
   all[0].y = PAD.top;
 
+  let cx = -totalW / 2;
   data.children.forEach((del, di) => {
-    const dx = -totalW / 2 + STYLE[1].w / 2 + di * (STYLE[1].w + GAP.delDel);
-    const dy = PAD.top + STYLE[0].minH + GAP.rootDel;
-    const hDel = nodeH(del.name, 1, false);
+    const delW = delWidths[di];
+    const density = del.children.length / maxWp;
+    const gapMul = 1 + (1 - density) * 0.25;
+    const gDelWp = Math.round(GAP.delWp * gapMul);
+    const gWpWp = Math.round(GAP.wpWp * gapMul);
+    const gWpTask = Math.round(GAP.wpTask * gapMul);
+    const gTaskTask = Math.round(GAP.taskTask * gapMul);
+
+    const wpW = Math.max(120, Math.min(delW - 18, 370));
+    const taskW = Math.max(100, wpW - 18);
+    const delMaxW = delW - 18;
+    const wpMaxW = wpW - 14;
+    const taskMaxW = taskW - 12;
+
+    const dx = cx + delW / 2;
+    cx += delW + GAP.delDel;
+
+    const hDel = nodeH(del.name, 1, false, delMaxW);
+    const delTopY = PAD.top + STYLE[0].minH + GAP.rootDel;
+    const dy = delTopY + hDel / 2;
     const did = `d${di}`;
 
-    all.push({ id:did, name:del.name, dep:1, x:dx, y:dy, w:STYLE[1].w, _h:hDel, ci:di, tasks:[], parent:'root' });
+    all.push({ id:did, name:del.name, dep:1, x:dx, y:dy, w:delW, _h:hDel, ci:di, tasks:[], parent:'root', _maxW:delMaxW });
     links.push({ src:'root', dst:did });
-    maxY = Math.max(maxY, dy + hDel);
+    maxY = Math.max(maxY, dy + hDel / 2);
 
-    let wy = dy + hDel + GAP.delWp;
+    let wy = dy + hDel + gDelWp;
+    const wpHeights = del.children.map(wp =>
+      nodeH(wp.name, 2, wp.tasks && wp.tasks.length > 0, wpMaxW));
 
     del.children.forEach((wp, wi) => {
       const hasT = wp.tasks && wp.tasks.length > 0;
-      const hWp = nodeH(wp.name, 2, hasT);
+      const hWp = wpHeights[wi];
+      const nextHWp = wi < wpHeights.length - 1 ? wpHeights[wi+1] : STYLE[2].minH;
       const wid = `${did}w${wi}`;
       const wpCollapsed = collapsedWPs.has(wid);
 
-      all.push({ id:wid, name:wp.name, dep:2, x:dx, y:wy, w:STYLE[2].w, _h:hWp,
+      all.push({ id:wid, name:wp.name, dep:2, x:dx, y:wy, w:wpW, _h:hWp,
         ci:di, tasks:wp.tasks||[], parent:did, nTasks:hasT ? wp.tasks.length : 0,
-        collapsed: wpCollapsed });
+        collapsed: wpCollapsed, _maxW:wpMaxW, _taskW:taskW, _taskMaxW:taskMaxW });
       links.push({ src:did, dst:wid });
-      wy += hWp + GAP.wpWp;
+      wy += (hWp + nextHWp) / 2 + symGap(gWpWp, hWp, nextHWp, STYLE[2].minH);
       maxY = Math.max(maxY, wy);
 
-      // Tasks (only if not collapsed)
       if (hasT && !wpCollapsed) {
-        let ty = wy + GAP.wpTask - GAP.wpWp;
+        let lastHTk = STYLE[4].minH;
+        let lastGap = symGap(gTaskTask, STYLE[4].minH, STYLE[4].minH, STYLE[4].minH);
+        let ty = wy - symGap(gWpWp, hWp, nextHWp, STYLE[2].minH) + dynGap(gWpTask, hWp, STYLE[3].minH);
         wp.tasks.forEach((tk, ti) => {
-          const hTk = nodeH(tk, 3, false);
+          const hTk = nodeH(tk, 3, false, taskMaxW);
+          lastHTk = hTk;
           const tid = `${wid}t${ti}`;
-          all.push({ id:tid, name:tk, dep:3, x:dx, y:ty, w:STYLE[4].w, _h:hTk,
-            ci:di, tasks:[], parent:wid });
+          all.push({ id:tid, name:tk, dep:3, x:dx, y:ty, w:taskW, _h:hTk,
+            ci:di, tasks:[], parent:wid, _maxW:taskMaxW });
           links.push({ src:wid, dst:tid });
-          ty += hTk + GAP.taskTask;
+          lastGap = dynGap(gTaskTask, hTk, STYLE[4].minH);
+          ty += hTk + lastGap;
         });
-        wy = ty - GAP.taskTask + GAP.wpWp;
+        wy = ty - lastGap + symGap(gWpWp, hWp, nextHWp, STYLE[2].minH);
         maxY = Math.max(maxY, wy);
       }
     });
   });
 
-  // ─── Links ────────────────────────────────────────────────────
+  // ─── Links (orthogonal 90°) ─────────────────────────────────
   treeGroup.selectAll('.link')
     .data(links)
     .join('path')
@@ -533,8 +640,8 @@ function render() {
       if (!src || !dst) return '';
       const sy = src.y + (src._h || STYLE[src.dep]?.minH || 19) / 2;
       const ty = dst.y - (dst._h || STYLE[dst.dep]?.minH || 19) / 2;
-      const mx = (src.x + dst.x) / 2, my = (sy + ty) / 2;
-      return `M${src.x},${sy} C${src.x},${my} ${dst.x},${my} ${dst.x},${ty}`;
+      const my = (sy + ty) / 2;
+      return `M${src.x},${sy} L${src.x},${my} L${dst.x},${my} L${dst.x},${ty}`;
     });
 
   // ─── Nodes ────────────────────────────────────────────────────
@@ -585,7 +692,7 @@ function render() {
       .attr('fill', s.fg).attr('font-weight', s.fw).attr('font-size', s.fs);
 
     // Use word-wrapping with tspan elements
-    const maxW = s.maxW;
+    const maxW = d._maxW || s.maxW;
     if (txW(d.name, s.fs, s.fw) <= maxW) {
       elText.text(d.name);
     } else {
