@@ -12,6 +12,10 @@
   .header{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:8px 24px;display:flex;align-items:center;gap:10px;flex-shrink:0}
   .header h1{font-size:18px;font-weight:600;letter-spacing:.3px}
   .header .badge{background:#e94560;padding:3px 12px;border-radius:10px;font-size:11px;font-weight:600;margin-left:auto}
+  .tabs{display:flex;gap:4px;margin-left:12px}
+  .tab{padding:4px 14px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;font-size:12px;font-weight:500;transition:all .15s}
+  .tab:hover{background:rgba(255,255,255,.1);color:#fff}
+  .tab.active{background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.6)}
   .toolbar{background:#fff;padding:6px 24px;border-bottom:1px solid #dce3ec;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
   .toolbar button{padding:5px 14px;border:1px solid #c8d0dc;border-radius:5px;background:#fff;cursor:pointer;font-size:12px;transition:all .15s;display:flex;align-items:center;gap:5px}
   .toolbar button:hover{background:#e8edf5;border-color:#8a9bb5}
@@ -53,6 +57,10 @@
 
 <div class="header">
   <h1>WBS — Paceron</h1>
+  <div class="tabs">
+    <button class="tab active" data-view="full" onclick="switchView('full')">Completa</button>
+    <button class="tab" data-view="simple" onclick="switchView('simple')">Solo entregables</button>
+  </div>
   <div class="badge">v2.0</div>
 </div>
 
@@ -74,8 +82,9 @@
   <svg id="tree-svg">
     <defs>
       <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#1a1a2e"/>
-        <stop offset="100%" stop-color="#0f3460"/>
+        <stop offset="0%" stop-color="#0d1321"/>
+        <stop offset="50%" stop-color="#1a1a3e"/>
+        <stop offset="100%" stop-color="#16213e"/>
       </linearGradient>
       <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
         <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity=".15"/>
@@ -432,7 +441,7 @@ const CSV = [
   ["","","Diagrama de secuencia del flujo de estímulos IA durante entrenamiento"]
 ];
 
-function buildHierarchy(csv) {
+function buildHierarchy(csv, simple) {
   const deliverables = [];
   let currentDel = null, lastWp = null, delIdx = -1;
 
@@ -445,7 +454,7 @@ function buildHierarchy(csv) {
       deliverables.push(currentDel);
       lastWp = null;
     }
-
+    if (simple) continue;
     if (!currentDel) continue;
 
     if (w) {
@@ -465,6 +474,7 @@ function buildHierarchy(csv) {
 // ─── Global state ────────────────────────────────────────────────
 let zoom, treeGroup, svg;
 let collapsedWPs = new Set();
+let currentView = 'full';
 
 // ─── Text measurement helpers (Canvas API) ──────────────────────
 const FONT = "'Segoe UI',Arial,sans-serif";
@@ -509,6 +519,17 @@ function nodeH(name, dep, hasTasks, maxW) {
   return Math.max(s.minH, Math.ceil(n * s.lh + 4));
 }
 
+function rectEdgePoint(cx, cy, w, h, tx, ty) {
+  const dx = tx - cx, dy = ty - cy;
+  const absDx = Math.abs(dx), absDy = Math.abs(dy);
+  const hw = w / 2, hh = h / 2;
+  if (absDx === 0 && absDy === 0) return { x: cx, y: cy };
+  if (absDx * hh > absDy * hw) {
+    return { x: cx + (dx > 0 ? hw : -hw), y: cy + dy * hw / absDx };
+  }
+  return { x: cx + dx * hh / absDy, y: cy + (dy > 0 ? hh : -hh) };
+}
+
 // ─── Main render ────────────────────────────────────────────────
 function render() {
   svg = d3.select('#tree-svg');
@@ -520,15 +541,16 @@ function render() {
   treeGroup = svg.select('#tree-group');
   treeGroup.selectAll('*').remove();
 
-  const data = buildHierarchy(CSV);
+  const data = buildHierarchy(CSV, currentView === 'simple');
 
   // Stats
   let tWP = 0, tTk = 0;
   data.children.forEach(d => d.children.forEach(wp => {
     tWP++; if (wp.tasks) tTk += wp.tasks.length;
   }));
-  document.getElementById('stats').textContent =
-    `${data.children.length} entregables · ${tWP} paquetes · ${tTk} tareas`;
+  document.getElementById('stats').textContent = currentView === 'simple'
+    ? `${data.children.length} entregables`
+    : `${data.children.length} entregables · ${tWP} paquetes · ${tTk} tareas`;
 
   // ─── Pre-compute positions with variable widths ─────────────
   const all = [];
@@ -536,18 +558,22 @@ function render() {
 
   all.push({ id:'root', name:'Paceron', dep:0, w:STYLE[0].w, _h:STYLE[0].minH, ci:-1, tasks:[], x:0, _maxW:STYLE[0].maxW });
 
-  const GAP = { rootDel:42, delWp:22, wpWp:14, wpTask:14, taskTask:10, delDel:22 };
+  const GAP = currentView === 'simple'
+    ? { rootDel:42, delDel:30 }
+    : { rootDel:42, delWp:22, wpWp:14, wpTask:14, taskTask:10, delDel:22 };
   const PAD = { top:36, bottom:40 };
 
   const wpCounts = data.children.map(d => d.children.length);
   const maxWp = Math.max(...wpCounts);
   const minWp = Math.min(...wpCounts);
   const wpRange = maxWp - minWp || 1;
-  const delWidths = data.children.map(d => {
-    const ratio = (d.children.length - minWp) / wpRange;
-    const aRatio = Math.pow(ratio, 2.2);
-    return Math.round(155 + aRatio * (445 - 155));
-  });
+  const delWidths = currentView === 'simple'
+    ? data.children.map(() => 160)
+    : data.children.map(d => {
+        const ratio = (d.children.length - minWp) / wpRange;
+        const aRatio = Math.pow(ratio, 2.2);
+        return Math.round(155 + aRatio * (445 - 155));
+      });
 
   const nDel = data.children.length;
   const totalW = delWidths.reduce((a, b) => a + b, 0) + (nDel - 1) * GAP.delDel;
@@ -556,6 +582,25 @@ function render() {
   all[0].y = PAD.top;
 
   let cx = -totalW / 2;
+
+  // Pre-compute positions for simple view (elliptical orbit)
+  if (currentView === 'simple') {
+    const dW = delWidths[0];
+    const n = data.children.length;
+    const a = 520, b = 360, bias = 0.08;
+    const hDels = data.children.map(d => nodeH(d.name, 1, false, dW - 18));
+    const uniH = Math.max(...hDels);
+    data.children.forEach((del, i) => {
+      const theta = (2 * Math.PI * i / n) - Math.PI / 2;
+      const angle = theta + bias * Math.sin(2 * theta);
+      del._pos = {
+        dx: a * Math.cos(angle),
+        dy: b * Math.sin(angle),
+        hDel: uniH
+      };
+    });
+  }
+
   data.children.forEach((del, di) => {
     const delW = delWidths[di];
     const density = del.children.length / maxWp;
@@ -571,12 +616,16 @@ function render() {
     const wpMaxW = wpW - 14;
     const taskMaxW = taskW - 12;
 
-    const dx = cx + delW / 2;
-    cx += delW + GAP.delDel;
-
-    const hDel = nodeH(del.name, 1, false, delMaxW);
-    const delTopY = PAD.top + STYLE[0].minH + GAP.rootDel;
-    const dy = delTopY + hDel / 2;
+    let dx, hDel, dy;
+    if (currentView === 'simple' && del._pos) {
+      dx = del._pos.dx; hDel = del._pos.hDel; dy = del._pos.dy;
+    } else {
+      dx = cx + delW / 2;
+      cx += delW + GAP.delDel;
+      hDel = nodeH(del.name, 1, false, delMaxW);
+      const delTopY = PAD.top + STYLE[0].minH + GAP.rootDel;
+      dy = delTopY + hDel / 2;
+    }
     const did = `d${di}`;
 
     all.push({ id:did, name:del.name, dep:1, x:dx, y:dy, w:delW, _h:hDel, ci:di, tasks:[], parent:'root', _maxW:delMaxW });
@@ -631,6 +680,11 @@ function render() {
       const src = all.find(n => n.id === d.src);
       const dst = all.find(n => n.id === d.dst);
       if (!src || !dst) return '';
+      if (currentView === 'simple') {
+        const s = rectEdgePoint(src.x, src.y, src.w, src._h, dst.x, dst.y);
+        const t = rectEdgePoint(dst.x, dst.y, dst.w, dst._h, src.x, src.y);
+        return `M${s.x},${s.y} L${t.x},${t.y}`;
+      }
       const sy = src.y + (src._h || STYLE[src.dep]?.minH || 19) / 2;
       const ty = dst.y - (dst._h || STYLE[dst.dep]?.minH || 19) / 2;
       const my = (sy + ty) / 2;
@@ -656,7 +710,7 @@ function render() {
     const w = d.w, h = d._h || s.minH;
 
     let rx, fill, stroke, sw, flt;
-    if (dep === 0)       { rx=10; fill='url(#rootGrad)'; stroke='none'; sw=0; flt='url(#shadow)'; }
+    if (dep === 0)       { rx=24; fill='url(#rootGrad)'; stroke='#f6c90e'; sw=2.5; flt='url(#shadow)'; }
     else if (dep === 1)  { rx=7;  fill=color;            stroke='none'; sw=0; flt='url(#shadow)'; }
     else if (dep === 2)  { rx=5;  fill=light;            stroke=color+'55'; sw=1; flt='url(#shadow-sm)'; }
     else                 { rx=4;  fill='#f8faff';        stroke='#d8e0ec'; sw=1; flt=null; }
@@ -822,6 +876,15 @@ function collapseAll() {
   });
   render();
   centerTree();
+}
+
+// ─── View switching ─────────────────────────────────────────────
+function switchView(mode) {
+  currentView = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === mode));
+  collapsedWPs.clear();
+  render();
+  setTimeout(centerTree, 100);
 }
 
 // ─── Export functions ───────────────────────────────────────────
